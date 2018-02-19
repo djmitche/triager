@@ -27,7 +27,7 @@ class App extends PureComponent {
 
   handleLoginClick() {
     auth.setPersistence(firebase.auth.Auth.Persistence.SESSION)
-      .then(() => auth.signInWithPopup(this.provider))
+      .then(() => auth.signInWithRedirect(this.provider))
       .catch((error) => {
         this.setState({ error });
       });
