@@ -1,9 +1,11 @@
 import { PureComponent } from 'react';
-import { func, shape, string, bool } from 'prop-types';
+import { func, object, shape, string, bool } from 'prop-types';
 import { connect } from 'react-firebase';
+import withUser from './withUser';
 
 class TriageItem extends PureComponent {
   static propTypes = {
+    user: object,
     item: shape({
       key: string.isRequired,
       url: string.isRequired,
@@ -13,13 +15,19 @@ class TriageItem extends PureComponent {
     updateItem: func.isRequired,
   }
 
+  handleClaimClick() {
+    const { item, user, updateItem } = this.props;
+    // note: user might still be undefined here?
+    updateItem({ ...item, claimedBy: user.email });
+  }
+
   render() {
-    const { item, updateItem } = this.props;
+    const { item } = this.props;
 
     const claim = item.claimedBy ? (
       `[${item.claimedBy}]`
     ) : (
-      <button onClick={() => updateItem({ ...item, claimedBy: 'me' })}>
+      <button onClick={() => this.handleClaimClick()}>
         Claim
       </button>
     );
@@ -34,9 +42,9 @@ class TriageItem extends PureComponent {
   }
 }
 
-export default connect((props, ref) => ({
+export default withUser(connect((props, ref) => ({
   updateItem: (item) => {
     const { key, ...value } = item;
     ref(`triage-items/${key}`).set(value);
   },
-}))(TriageItem);
+}))(TriageItem));
