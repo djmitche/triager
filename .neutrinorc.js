@@ -1,6 +1,14 @@
 module.exports = {
   use: [
-    '@neutrinojs/airbnb',
+    ['@neutrinojs/airbnb' {
+      eslint: {
+        rules: {
+          // since many of the props come from firebase, we are fairly loose
+          // with the format (preferring not to explode on bogus data)
+          'react/forbid-prop-types': 'off',
+        }
+      }
+    }],
     [
       '@neutrinojs/react',
       {
